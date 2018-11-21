@@ -1,0 +1,21 @@
+{
+  "name": "tech-tube",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel index.html",
+    "build": "parcel index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lodash.debounce": "^4.0.8",
+    "lodash.filter": "^4.6.0",
+    "sass": "^1.14.3"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.10.3"
+  }
+}

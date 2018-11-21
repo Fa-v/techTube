@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Syncopate:400,700"
+      rel="stylesheet"
+    />
+    <title>Tech Tube</title>
+  </head>
+
+  <body>
+    <main>
+      <section>
+        <h1>Tech Tube</h1>
+        <form role="search" id="search-bar">
+          <div>
+            <input
+              id="search-input"
+              class="searchBox"
+              type="search"
+              name="term"
+              placeholder="JavaScript"
+              aria-label="Search for technology"
+              data-test="inputSearch"
+            />
+          </div>
+          <button type="button" type="submit" name="search">Search</button>
+        </form>
+      </section>
+      <section id="videos-section"></section>
+    </main>
+  </body>
+
+  <script src="./src/index.js"></script>
+</html>

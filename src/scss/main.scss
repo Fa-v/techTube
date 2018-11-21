@@ -1,0 +1,19 @@
+$primary: purple;
+$font-stack: 'Syncopate', sans-serif;
+$font-size: 100%;
+
+html {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: $font-size;
+  font-family: $font-stack;
+  font-size: 100%;
+  line-height: 1.6;
+}
+
+body {
+  background: $primary;
+  width: 100vw;
+  height: 100vh;
+}
