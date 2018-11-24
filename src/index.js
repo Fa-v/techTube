@@ -1,7 +1,6 @@
 import filter from 'lodash.filter';
 import debounce from 'lodash.debounce';
 import './scss/main.scss';
-import videoData from './mockData';
 
 (function() {
   const app = {};
@@ -11,7 +10,8 @@ import videoData from './mockData';
   const key = process.env.API_KEY;
   let query;
   let state = {
-    activeVideo: null
+    activeVideo: null,
+    query: 'javascript'
   };
 
   app.submitInput = function() {
@@ -27,52 +27,96 @@ import videoData from './mockData';
       event.preventDefault();
       event.stopPropagation();
       query = searchInput.value;
-      app.inputValidations(query);
+      if (event.isTrusted) {
+        app.inputValidations(query);
+      } else {
+        console.log('sorry I do not trust you');
+      }
     });
   };
 
   app.inputValidations = function(query) {
-    const regEx = new RegExp('^[a-zA-Z0-9/\\s]+$');
-    query.trim();
+    !query ? (query = state.query) : query;
+    query = query.toLowerCase().trim();
+    const regEx = /^[a-zA-Z]+$/;
     const validQuery = regEx.test(query);
-    if (validQuery) {
-      //http request;
-      console.log('query', query);
+
+    if (validQuery && query) {
+      app.getVideos(query);
     } else {
-      console.log('not valid query', query);
+      return searchBar.insertAdjacentHTML(
+        'beforeend',
+        `<p>Introduce sólo caracteres de la a a la z</p>`
+      );
     }
   };
 
-  app.createMainVideo = function(videoData) {
+  app.getVideos = function(query) {
+    const url =
+      'https://www.googleapis.com/youtube/v3/search?part=snippet&q=' +
+      query +
+      '&type=video&maxResults=25&key=' +
+      key;
+
+    const xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange = function() {
+      if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
+        const response = JSON.parse(xmlHttp.responseText);
+        const videosData = response.items;
+        const nextPageToken = response.nextPageToken;
+
+        app.processResponse(videosData);
+      } else if (xmlHttp.readyState === 4 && xmlHttp.status === 404) {
+        const response = xmlHttp.responseText;
+        app.handleError(response);
+      }
+    };
+
+    xmlHttp.open('GET', url, true);
+    xmlHttp.send();
+  };
+
+  app.handleError = function(response) {
+    const container = document.querySelector('.container');
+    return (container.innerHTML = `<h1>Santos errores Batman nos ha dado un 404</h1>`);
+  };
+
+  app.processResponse = function(data) {
+    const topVideo = data[0];
+    const videosList = data;
+
+    app.createMainVideo(topVideo);
+    app.createVideoList(videosList);
+  };
+
+  app.createMainVideo = function(video) {
     const mainVideo = document.querySelector('.mainVideo');
-    const defaultVideo = videoData.items[0];
-    const title = defaultVideo.snippet.title;
-    const channelTitle = defaultVideo.snippet.channelTitle;
-    const description = defaultVideo.snippet.description;
-    const broadcast = defaultVideo.snippet.liveBroadcastContent;
-    const width = defaultVideo.snippet.thumbnails.high.width;
-    const height = defaultVideo.snippet.thumbnails.high.height;
-    const videoId = defaultVideo.id.videoId;
-    let publishedAt = defaultVideo.snippet.publishedAt;
+    const title = video.snippet.title;
+    const channelTitle = video.snippet.channelTitle;
+    const description = video.snippet.description;
+    const broadcast = video.snippet.liveBroadcastContent;
+    const width = video.snippet.thumbnails.high.width;
+    const height = video.snippet.thumbnails.high.height;
+    const videoId = video.id.videoId;
+    let publishedAt = video.snippet.publishedAt;
     publishedAt = new Date(publishedAt).toLocaleString();
 
     state.activeVideo = videoId;
 
-    let mainVideoTemplate = `<div>
+    return (mainVideo.innerHTML = `<div>
     <iframe width=${width} height=${height} src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><div>
     <h4>${title}</h4>
     <p>${channelTitle}</p>
     <p>${description}</p>
     <p>${publishedAt}</p>
-  </div>`;
-
-    mainVideo.innerHTML = mainVideoTemplate;
+  </div>`);
   };
 
-  app.createVideoList = function(videoData) {
+  app.createVideoList = function(videos) {
     const videoSection = document.querySelector('.videosSection');
 
-    let videoList = videoData.items
+    return (videoSection.innerHTML = videos
       .map(function(item) {
         const title = item.snippet.title;
         const videoId = item.id.videoId;
@@ -94,11 +138,9 @@ import videoData from './mockData';
     </div>`;
         return template;
       })
-      .join('');
-    videoSection.innerHTML = videoList;
+      .join(''));
   };
-  app.createVideoList(videoData);
-  app.createMainVideo(videoData);
+
   app.submitInput();
   app.submitButton();
   app.inputValidations();
