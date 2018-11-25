@@ -79,14 +79,15 @@ import './scss/main.scss';
 
   app.handleError = function(response) {
     const container = document.querySelector('.container');
-    return (container.innerHTML = `<h1>Santos errores Batman nos ha dado un 404</h1>`);
+    return (container.innerHTML = `<div><h1>Santos errores Batman nos ha dado un 404</h1><img src='https://media1.tenor.com/images/2fdce40fb465cb0b65b391781457f1b3/tenor.gif?itemid=5685360'/></div>`);
   };
 
   app.processResponse = function(data) {
     const topVideo = data[0];
     const videosList = data;
+    state.activeVideo = topVideo;
 
-    app.createMainVideo(topVideo);
+    app.createMainVideo(state.activeVideo);
     app.createVideoList(videosList);
   };
 
@@ -102,8 +103,6 @@ import './scss/main.scss';
     let publishedAt = video.snippet.publishedAt;
     publishedAt = new Date(publishedAt).toLocaleString();
 
-    state.activeVideo = videoId;
-
     return (mainVideo.innerHTML = `<div>
     <iframe width=${width} height=${height} src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><div>
     <h4>${title}</h4>
@@ -116,29 +115,39 @@ import './scss/main.scss';
   app.createVideoList = function(videos) {
     const videoSection = document.querySelector('.videosSection');
 
-    return (videoSection.innerHTML = videos
-      .map(function(item) {
-        const title = item.snippet.title;
-        const videoId = item.id.videoId;
-        const channelTitle = item.snippet.channelTitle;
-        const description = item.snippet.description;
-        const broadcast = item.snippet.liveBroadcastContent;
-        const smallWidth = item.snippet.thumbnails.default.width;
-        const smallHeight = item.snippet.thumbnails.default.height;
-        let publishedAt = item.snippet.publishedAt;
-        publishedAt = new Date(publishedAt).toLocaleString();
+    for (let i = 0; i < videos.length; i++) {
+      const currentVideo = videos[i];
+      const title = currentVideo.snippet.title;
+      const channelTitle = currentVideo.snippet.channelTitle;
+      const description = currentVideo.snippet.description;
+      const broadcast = currentVideo.snippet.liveBroadcastContent;
+      const mediumWidth = currentVideo.snippet.thumbnails.medium.width;
+      const mediumHeight = currentVideo.snippet.thumbnails.medium.height;
+      const urlThumb = currentVideo.snippet.thumbnails.medium.url;
+      let publishedAt = currentVideo.snippet.publishedAt;
+      publishedAt = new Date(publishedAt).toLocaleString();
+      let card = document.createElement('div');
 
-        let template = `<div>
-    <iframe width=${smallWidth} height=${smallHeight} src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    <p>${title}</p>
-    <p>${description}</p>
-    <p>${publishedAt}</p>
-    <p>${channelTitle}</p>
-    <p>${broadcast}</p>
-    </div>`;
-        return template;
-      })
-      .join(''));
+      let template = `
+      <img src=${urlThumb} width=${mediumWidth} height=${mediumHeight} alt=${title}/>
+      <p>${title}</p>
+      <p>${description}</p>
+      <p>${publishedAt}</p>
+      <p>${channelTitle}</p>
+      <p>${broadcast}</p>`;
+      card.insertAdjacentHTML('afterbegin', template);
+
+      card.addEventListener(
+        'click',
+        (function(currentVideo) {
+          return function() {
+            app.createMainVideo(currentVideo);
+          };
+        })(currentVideo)
+      );
+
+      videoSection.append(card);
+    }
   };
 
   app.submitInput();
