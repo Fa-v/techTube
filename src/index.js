@@ -3,6 +3,7 @@ import debounce from 'lodash.debounce';
 import './scss/main.scss';
 
 (function() {
+  /** @namespace */
   const app = {};
   const searchBar = document.forms['search-bar'];
   const searchButton = document.querySelector('button');
@@ -14,6 +15,10 @@ import './scss/main.scss';
     query: 'javascript'
   };
 
+  /**
+   * Adds a submit event to the input and retrieve the submitted value by the user
+   * @returns {void}
+   */
   app.submitInput = function() {
     searchBar.addEventListener('submit', function(event) {
       event.preventDefault();
@@ -22,6 +27,10 @@ import './scss/main.scss';
     });
   };
 
+  /**
+   * Adds a click event to the search button to retrieve the submitted value by the user
+   * @returns {void}
+   */
   app.submitButton = function() {
     searchButton.addEventListener('click', function(event) {
       event.preventDefault();
@@ -35,6 +44,10 @@ import './scss/main.scss';
     });
   };
 
+  /**
+   * Validates if the query contains only alphanumeric characters and is not an empty string
+   * @returns {void} if error returns a html template
+   */
   app.inputValidations = function(query) {
     !query ? (query = state.query) : query;
     query = query.toLowerCase().trim();
@@ -51,6 +64,11 @@ import './scss/main.scss';
     }
   };
 
+  /**
+   * Http request gets all videos from YouTube
+   * @param {string} query term introduced by the user
+   * @returns {Object} http response
+   */
   app.getVideos = function(query) {
     const url =
       'https://www.googleapis.com/youtube/v3/search?part=snippet&q=' +
@@ -77,11 +95,25 @@ import './scss/main.scss';
     xmlHttp.send();
   };
 
+  /**
+   * Process errors thrown by the Http request
+   * @param {Object} error
+   * @returns {String} html template
+   */
   app.handleError = function(response) {
     const container = document.querySelector('.container');
-    return (container.innerHTML = `<div><h1>Santos errores Batman nos ha dado un 404</h1><img src='https://media1.tenor.com/images/2fdce40fb465cb0b65b391781457f1b3/tenor.gif?itemid=5685360'/></div>`);
+    return (container.innerHTML = `<div>
+      <h1>Santos errores Batman nos ha dado un 404</h1>
+      <img src='https://media1.tenor.com/images/2fdce40fb465cb0b65b391781457f1b3/tenor.gif?itemid=5685360'/>
+      <p>${response}</p>
+    </div>`);
   };
 
+  /**
+   * Sets videos for the video's list and the main section
+   * @param {Array} array The items array in the the Http response
+   * @returns {Void}
+   */
   app.processResponse = function(data) {
     const topVideo = data[0];
     const videosList = data;
@@ -91,6 +123,11 @@ import './scss/main.scss';
     app.createVideoList(videosList);
   };
 
+  /**
+   * Creates the main section with the featured video
+   * @param {Object} object The first video from the items array in the response
+   * @returns {String} html template
+   */
   app.createMainVideo = function(video) {
     const mainVideo = document.querySelector('.mainVideo');
     const title = video.snippet.title;
@@ -112,6 +149,11 @@ import './scss/main.scss';
   </div>`);
   };
 
+  /**
+   * Creates the video list section
+   * @param {Array} array The array of videos from the Http response
+   * @returns {String} html template
+   */
   app.createVideoList = function(videos) {
     const videoSection = document.querySelector('.videosSection');
 
