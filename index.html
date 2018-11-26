@@ -12,25 +12,27 @@
   </head>
 
   <body>
+    <header class="header">
+      <h1>Tech Tube</h1>
+      <form role="search" id="search-bar">
+        <div>
+          <input
+            id="search-input"
+            class="searchBox"
+            type="search"
+            name="term"
+            maxlength="30"
+            placeholder="JavaScript"
+            aria-label="Search for technology"
+            data-test="inputSearch"
+          />
+          <button class="submitBtn" type="button" type="submit" name="search">
+            Search
+          </button>
+        </div>
+      </form>
+    </header>
     <main class="container">
-      <section>
-        <h1>Tech Tube</h1>
-        <form role="search" id="search-bar">
-          <div>
-            <input
-              id="search-input"
-              class="searchBox"
-              type="search"
-              name="term"
-              maxlength="30"
-              placeholder="JavaScript"
-              aria-label="Search for technology"
-              data-test="inputSearch"
-            />
-            <button type="button" type="submit" name="search">Search</button>
-          </div>
-        </form>
-      </section>
       <section class="mainVideo"></section>
       <section class="videosSection"></section>
     </main>

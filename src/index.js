@@ -140,8 +140,9 @@ import './scss/main.scss';
     let publishedAt = video.snippet.publishedAt;
     publishedAt = new Date(publishedAt).toLocaleString();
 
-    return (mainVideo.innerHTML = `<div>
-    <iframe width=${width} height=${height} src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><div>
+    return (mainVideo.innerHTML = `<div class="videoFrame">
+    <iframe class="frame" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+    <div class="mainDescription">
     <h4>${title}</h4>
     <p>${channelTitle}</p>
     <p>${description}</p>
@@ -169,14 +170,17 @@ import './scss/main.scss';
       let publishedAt = currentVideo.snippet.publishedAt;
       publishedAt = new Date(publishedAt).toLocaleString();
       let card = document.createElement('div');
+      card.setAttribute('class', 'card');
 
       let template = `
       <img src=${urlThumb} width=${mediumWidth} height=${mediumHeight} alt=${title}/>
-      <p>${title}</p>
+      <div class=description>
+      <h4>${title}</h4>
       <p>${description}</p>
       <p>${publishedAt}</p>
       <p>${channelTitle}</p>
-      <p>${broadcast}</p>`;
+      <p>${broadcast}</p>
+      <div>`;
       card.insertAdjacentHTML('afterbegin', template);
 
       card.addEventListener(
