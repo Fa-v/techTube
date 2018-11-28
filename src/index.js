@@ -8,6 +8,7 @@ import './scss/main.scss';
   const searchBar = document.forms['search-bar'];
   const searchButton = document.querySelector('button');
   const searchInput = document.getElementById('search-input');
+  const videoSection = document.querySelector('.videosSection');
   const key = process.env.API_KEY;
   let query;
   let state = {
@@ -23,6 +24,13 @@ import './scss/main.scss';
     searchBar.addEventListener('submit', function(event) {
       event.preventDefault();
       query = searchInput.value;
+      if (!query) {
+        searchBar.insertAdjacentHTML(
+          'beforeend',
+          `<p>Por favor, introduce un término</p>`
+        );
+        return;
+      }
       app.inputValidations(query);
     });
   };
@@ -51,7 +59,7 @@ import './scss/main.scss';
   app.inputValidations = function(query) {
     !query ? (query = state.query) : query;
     query = query.toLowerCase().trim();
-    const regEx = /^[a-zA-Z]+$/;
+    const regEx = /^[a-zA-Z0-9]+$/;
     const validQuery = regEx.test(query);
 
     if (validQuery && query) {
@@ -73,7 +81,7 @@ import './scss/main.scss';
     const url =
       'https://www.googleapis.com/youtube/v3/search?part=snippet&q=' +
       query +
-      '&type=video&maxResults=25&key=' +
+      '&safeSearch=strict&type=video&maxResults=25&key=' +
       key;
 
     const xmlHttp = new XMLHttpRequest();
@@ -133,9 +141,6 @@ import './scss/main.scss';
     const title = video.snippet.title;
     const channelTitle = video.snippet.channelTitle;
     const description = video.snippet.description;
-    const broadcast = video.snippet.liveBroadcastContent;
-    const width = video.snippet.thumbnails.high.width;
-    const height = video.snippet.thumbnails.high.height;
     const videoId = video.id.videoId;
     let publishedAt = video.snippet.publishedAt;
     publishedAt = new Date(publishedAt).toLocaleString();
@@ -156,11 +161,11 @@ import './scss/main.scss';
    * @returns {String} html template
    */
   app.createVideoList = function(videos) {
-    const videoSection = document.querySelector('.videosSection');
-
+    videoSection.innerHTML = '';
     for (let i = 0; i < videos.length; i++) {
       const currentVideo = videos[i];
       const title = currentVideo.snippet.title;
+      const videoId = currentVideo.id.videoId;
       const channelTitle = currentVideo.snippet.channelTitle;
       const description = currentVideo.snippet.description;
       const broadcast = currentVideo.snippet.liveBroadcastContent;
@@ -171,16 +176,15 @@ import './scss/main.scss';
       publishedAt = new Date(publishedAt).toLocaleString();
       let card = document.createElement('div');
       card.setAttribute('class', 'card');
-
       let template = `
-      <img src=${urlThumb} width=${mediumWidth} height=${mediumHeight} alt=${title}/>
-      <div class=description>
-      <h4>${title}</h4>
-      <p>${description}</p>
-      <p>${publishedAt}</p>
-      <p>${channelTitle}</p>
-      <p>${broadcast}</p>
-      <div>`;
+        <img src=${urlThumb} width=${mediumWidth} height=${mediumHeight} alt=${title}/>
+        <div class="description">
+          <h4>${title}</h4>
+          <p>${description}</p>
+          <p>${publishedAt}</p>
+          <p>${channelTitle}</p>
+          <p>${broadcast}</p>
+          </div>`;
       card.insertAdjacentHTML('afterbegin', template);
 
       card.addEventListener(
@@ -195,8 +199,45 @@ import './scss/main.scss';
       videoSection.append(card);
     }
   };
+  /* app.createVideoList = function(videos) {
+    return (videoSection.innerHTML = videos
+      .map(function(video) {
+        const title = video.snippet.title;
+        const videoId = video.id.videoId;
+        const channelTitle = video.snippet.channelTitle;
+        const description = video.snippet.description;
+        const broadcast = video.snippet.liveBroadcastContent;
+        const mediumWidth = video.snippet.thumbnails.medium.width;
+        const mediumHeight = video.snippet.thumbnails.medium.height;
+        const urlThumb = video.snippet.thumbnails.medium.url;
+        let publishedAt = video.snippet.publishedAt;
+        publishedAt = new Date(publishedAt).toLocaleString();
 
-  app.submitInput();
+        let template = `<div class="card" data-id=${videoId}>
+        <img src=${urlThumb} width=${mediumWidth} height=${mediumHeight} alt=${title}/>
+          <p>${title}</p>
+          <p>${description}</p>
+          <p>${publishedAt}</p>
+          <p>${channelTitle}</p>
+          <p>${broadcast}</p>
+          </div>`;
+        return template;
+      })
+      .join(''));
+  }; */
+
+  /* Sólo tiene un el Id de una carta */
+  /*  app.cardClick = function(data) {
+    videoSection.addEventListener('click', function(event) {
+      const cards = document.querySelectorAll('.card');
+      const id = data.
+      cards.forEach(function(card) {
+
+      });
+    });
+  }; */
+
+  app.selectCard = app.submitInput();
   app.submitButton();
   app.inputValidations();
   return app;
