@@ -105,13 +105,13 @@ body {
   @media only screen and (min-width: 1200px) {
     flex-wrap: nowrap;
     padding: $section-padding-medium;
-    justify-content: space-evenly;
+    justify-content: center;
   }
 }
 
 .videoFrame {
-  @media only screen and (min-width: 640px) {
-    margin-right: 3em;
+  @media only screen and (min-width: 1200px) {
+    margin-right: 1.5em;
   }
 }
 
@@ -126,14 +126,16 @@ body {
 
 .mainDescription {
   padding: 1em;
-  width: 272px;
+  width: 320px;
+  height: 180px;
   font-family: $font-stack-title;
   background: $light-grey;
   p {
     font-family: $font-stack-body;
   }
   @media only screen and (min-width: 640px) {
-    width: 480px;
+    width: 450px;
+    height: 330px;
   }
 }
 
