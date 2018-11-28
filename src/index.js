@@ -25,10 +25,7 @@ import './scss/main.scss';
       event.preventDefault();
       query = searchInput.value;
       if (!query) {
-        searchBar.insertAdjacentHTML(
-          'beforeend',
-          `<p>Por favor, introduce un término</p>`
-        );
+        app.noQuery();
         return;
       }
       app.inputValidations(query);
@@ -45,11 +42,30 @@ import './scss/main.scss';
       event.stopPropagation();
       query = searchInput.value;
       if (event.isTrusted) {
-        app.inputValidations(query);
+        if (!query) {
+          app.noQuery();
+        } else {
+          app.inputValidations(query);
+        }
       } else {
         console.log('sorry I do not trust you');
       }
     });
+  };
+
+  /**
+   * Show a snack bar if the user tries to submit an empty query
+   * @returns {void}
+   */
+  app.noQuery = function() {
+    let showSnack;
+    clearTimeout(showSnack);
+    let snack = document.getElementById('snack');
+    snack.innerText = 'Por favor, introduce un término';
+
+    showSnack = setTimeout(function() {
+      snack.innerText = '';
+    }, 3000);
   };
 
   /**
@@ -110,7 +126,7 @@ import './scss/main.scss';
    */
   app.handleError = function(response) {
     const container = document.querySelector('.container');
-    return (container.innerHTML = `<div>
+    return (container.innerHTML = `<div class="notFound">
       <h1>Santos errores Batman nos ha dado un 404</h1>
       <img src='https://media1.tenor.com/images/2fdce40fb465cb0b65b391781457f1b3/tenor.gif?itemid=5685360'/>
       <p>${response}</p>
@@ -179,11 +195,10 @@ import './scss/main.scss';
       let template = `
         <img src=${urlThumb} width=${mediumWidth} height=${mediumHeight} alt=${title}/>
         <div class="description">
-          <h4>${title}</h4>
+        <p>${channelTitle}</p>
+        <h4>${title}</h4>
           <p>${description}</p>
           <p>${publishedAt}</p>
-          <p>${channelTitle}</p>
-          <p>${broadcast}</p>
           </div>`;
       card.insertAdjacentHTML('afterbegin', template);
 

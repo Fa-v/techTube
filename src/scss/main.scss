@@ -6,9 +6,9 @@ $dark-grey: #babec1;
 $font-stack-title: 'Syncopate', sans-serif;
 $font-stack-body: Helvetica, Arial, sans-serif;
 $font-size: 100%;
+$small-font: 0.8em;
 $section-padding: 3rem 1.5rem;
-$section-padding-medium: 9rem 1.5rem;
-$section-padding-large: 18rem 1.5rem;
+$section-padding-medium: 6rem 1.5rem;
 $button-border-width: 1px;
 $button-padding-vertical: calc(16px - #{$button-border-width});
 
@@ -20,6 +20,12 @@ html {
   font-family: $font-stack-body;
   font-size: 100%;
   line-height: 1.6;
+  @media only screen and (min-width: 640px) {
+    font-size: 112%;
+  }
+  @media only screen and (min-width: 1200px) {
+    font-size: 125%;
+  }
 }
 
 *::before {
@@ -45,16 +51,13 @@ body {
   justify-content: center;
   align-items: baseline;
   border-bottom: 2px solid #f6463e;
-  font-size: 100%;
   h1 {
     font-family: $font-stack-title;
   }
   @media only screen and (min-width: 640px) {
-    font-size: 112%;
     justify-content: space-between;
   }
   @media only screen and (min-width: 1200px) {
-    font-size: 125%;
     line-height: 1.8;
   }
 }
@@ -63,7 +66,7 @@ body {
   padding: 16px;
   background-color: $light-grey;
   border-style: none;
-  font-size: 0.8em;
+  font-size: $small-font;
   margin: 0 1em 1em 0;
   &:focus {
     outline: none;
@@ -80,7 +83,7 @@ body {
   padding: $button-padding-vertical;
   border: 1px solid $primary;
   color: $primary;
-  font-size: 0.8em;
+  font-size: $small-font;
   background: $white;
   &:hover {
     background: $primary;
@@ -99,12 +102,8 @@ body {
   justify-content: center;
   padding: $section-padding;
 
-  @media only screen and (min-width: 640px) {
-    padding: $section-padding-medium;
-  }
   @media only screen and (min-width: 1200px) {
     flex-wrap: nowrap;
-    padding: $section-padding-medium;
     justify-content: center;
   }
 }
@@ -127,7 +126,6 @@ body {
 .mainDescription {
   padding: 1em;
   width: 320px;
-  height: 180px;
   font-family: $font-stack-title;
   background: $light-grey;
   p {
@@ -160,6 +158,27 @@ body {
 }
 
 .description {
-  font-size: 0.8em;
+  font-size: $small-font;
   padding: 0.5em 1em;
+}
+
+.snackbar {
+  color: black;
+  position: fixed;
+  top: 25px;
+  right: 10%;
+  text-align: center;
+  border-radius: 2px;
+}
+
+.notFound {
+  text-align: center;
+  img {
+    width: 300px;
+  }
+  @media only screen and (min-width: 640px) {
+    img {
+      width: auto;
+    }
+  }
 }
