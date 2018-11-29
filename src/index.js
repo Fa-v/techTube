@@ -158,8 +158,8 @@ import './scss/main.scss';
     const channelTitle = video.snippet.channelTitle;
     const description = video.snippet.description;
     const videoId = video.id.videoId;
-    let publishedAt = video.snippet.publishedAt;
-    publishedAt = new Date(publishedAt).toLocaleString();
+    const publishedAt = video.snippet.publishedAt;
+    const publicadoHace = app.getFriendlyPublishedAt(publishedAt);
 
     return (mainVideo.innerHTML = `<div class="videoFrame">
     <iframe class="frame" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
@@ -167,8 +167,47 @@ import './scss/main.scss';
     <h4>${title}</h4>
     <p>${channelTitle}</p>
     <p>${description}</p>
-    <p>${publishedAt}</p>
+    <p>${publicadoHace}</p>
   </div>`);
+  };
+
+  /**
+   * Formats the video published date to a more user friendly text string
+   * @param {String} date the published at date
+   * @return {String} text date
+   */
+  app.getFriendlyPublishedAt = function(date) {
+    const fechaMiliSecs = new Date(date).getTime();
+    const hoy = new Date().getTime();
+    const dif = hoy - fechaMiliSecs;
+    const milisecsMonth = 0.00000000038;
+    const milisecsWeek = 604800309.6576;
+    const milisecsDay = 86400044.2368;
+
+    const miliSecsMes = dif * milisecsMonth;
+    const años = Math.floor(miliSecsMes / 12);
+    const meses = Math.floor(miliSecsMes % 12);
+    const semanas = Math.floor(meses / milisecsWeek);
+    const dias = Math.floor(dif / milisecsDay);
+
+    const haceAños =
+      años === 0 ? '' : años > 1 ? `${años} años` : `${años} año`;
+    const haceMeses =
+      meses === 0 ? '' : meses > 1 ? `${meses} meses` : `${meses} mes`;
+    const haceSemanas =
+      semanas === 0
+        ? ''
+        : semanas > 1
+        ? `${semanas} semanas`
+        : `${semanas} semana`;
+    let haceDias;
+    if (dias === 0 || dias > 29) {
+      haceDias = '';
+    } else {
+      haceDias = dias > 1 ? `${dias} días` : `${dias} día`;
+    }
+
+    return `Publicado hace ${haceAños} ${haceMeses} ${haceSemanas} ${haceDias}`;
   };
 
   /**
@@ -184,21 +223,22 @@ import './scss/main.scss';
       const videoId = currentVideo.id.videoId;
       const channelTitle = currentVideo.snippet.channelTitle;
       const description = currentVideo.snippet.description;
-      const broadcast = currentVideo.snippet.liveBroadcastContent;
       const mediumWidth = currentVideo.snippet.thumbnails.medium.width;
       const mediumHeight = currentVideo.snippet.thumbnails.medium.height;
       const urlThumb = currentVideo.snippet.thumbnails.medium.url;
-      let publishedAt = currentVideo.snippet.publishedAt;
-      publishedAt = new Date(publishedAt).toLocaleString();
-      let card = document.createElement('div');
+      const publishedAt = currentVideo.snippet.publishedAt;
+      const publicadoHace = app.getFriendlyPublishedAt(publishedAt);
+
+      const card = document.createElement('div');
       card.setAttribute('class', 'card');
-      let template = `
+      const template = `
         <img src=${urlThumb} width=${mediumWidth} height=${mediumHeight} alt=${title}/>
         <div class="description">
-        <p>${channelTitle}</p>
         <h4>${title}</h4>
+        <p>${channelTitle}</p>
           <p>${description}</p>
-          <p>${publishedAt}</p>
+          <hr>
+          <p>${publicadoHace}</p>
           </div>`;
       card.insertAdjacentHTML('afterbegin', template);
 
