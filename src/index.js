@@ -1,5 +1,3 @@
-import filter from 'lodash.filter';
-import debounce from 'lodash.debounce';
 import './scss/main.scss';
 
 (function() {
@@ -15,6 +13,7 @@ import './scss/main.scss';
     activeVideo: null,
     query: 'javascript'
   };
+  let loaderDiv;
 
   /**
    * Adds a submit event to the input and retrieve the submitted value by the user
@@ -255,8 +254,27 @@ import './scss/main.scss';
     }
   };
 
+  /**
+   * Adds a timeout to show the page loader
+   * @returns {void}
+   */
+  app.showLoader = function() {
+    loaderDiv = setTimeout(app.showPage, 1500);
+  };
+
+  /**
+   * Togles the styles to hide the loader and to show the page and clears the timeout
+   * @returns {void}
+   */
+  app.showPage = function() {
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('wrapper').style.display = 'block';
+    clearTimeout(loaderDiv);
+  };
+
   app.selectCard = app.submitInput();
   app.submitButton();
   app.inputValidations();
+  app.showLoader();
   return app;
 })();
