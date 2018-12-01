@@ -14,6 +14,7 @@ import './scss/main.scss';
     query: 'javascript'
   };
   let loaderDiv;
+  let scrollTimeOut;
 
   /**
    * Adds a submit event to the input and retrieve the submitted value by the user
@@ -246,12 +247,23 @@ import './scss/main.scss';
         (function(currentVideo) {
           return function() {
             app.createMainVideo(currentVideo);
+            scrollTimeOut = setTimeout(app.scrollToTop, 200);
           };
         })(currentVideo)
       );
 
       videoSection.append(card);
     }
+  };
+
+  /**
+   * Scrolls the window to position zero
+   * @returns {void}
+   */
+  app.scrollToTop = function() {
+    window.scrollTo(0, 0);
+
+    clearTimeout(scrollTimeOut);
   };
 
   /**
